@@ -1,0 +1,32 @@
+-- MySQL STORED PROCEDURE TODOs — DO NOT WRITE IMPLEMENTATIONS.
+
+-- TODO: Deposit procedure
+-- Inputs: account identifier, amount, acting user/agent.
+-- Required:
+-- 1. validate account and active status
+-- 2. validate positive amount
+-- 3. update balance
+-- 4. insert DEPOSIT transaction
+-- 5. generate unique transaction reference
+-- 6. COMMIT all changes or ROLLBACK on failure
+-- Concurrency: ensure concurrent operations cannot lose updates.
+
+-- TODO: Withdrawal procedure
+-- Required:
+-- 1. validate account and eligibility
+-- 2. check available balance
+-- 3. enforce minimum balance
+-- 4. update balance
+-- 5. insert WITHDRAWAL transaction
+-- 6. rollback if any step fails
+-- Concurrency: use appropriate row locking/isolation.
+
+-- TODO: Interest processing procedure
+-- Required:
+-- 1. identify eligible FDs whose next payout is due
+-- 2. calculate monthly interest
+-- 3. credit linked savings account
+-- 4. create INTEREST_CREDIT transaction
+-- 5. create interest-distribution record
+-- 6. update next payout date / FD state
+-- 7. execute atomically.

@@ -1,0 +1,14 @@
+-- MySQL INDEX TODOs — DO NOT WRITE IMPLEMENTATIONS.
+--
+-- TODO: identify indexes for:
+-- - user login identifier
+-- - customer identification/search
+-- - branch/agent relationships
+-- - savings account number
+-- - account-holder relationships
+-- - transactions by account and timestamp
+-- - transaction reference
+-- - FDs by status and next interest payout
+-- - report filter/grouping columns where justified
+--
+-- Avoid indexes that do not support real access patterns.

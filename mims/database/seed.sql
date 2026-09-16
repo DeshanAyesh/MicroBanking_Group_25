@@ -1,0 +1,19 @@
+-- SAMPLE DATA TODOs — DO NOT WRITE INSERT STATEMENTS HERE.
+--
+-- Prepare conceptual data for at least:
+-- 3 branches
+-- 5 agents
+-- 15 customers
+-- 2 joint accounts
+-- 10 fixed deposits
+-- 100 transactions
+--
+-- Data should be realistic for Sri Lankan microfinance banking.
+-- Include enough variation to demonstrate:
+-- - different savings plans
+-- - individual and joint accounts
+-- - deposits and withdrawals
+-- - interest credits
+-- - different branches/agents
+--
+-- TODO: Write the INSERT statements yourselves after finalizing schema.sql.

@@ -1,0 +1,25 @@
+-- REPORT SQL TODOs — DO NOT WRITE QUERIES.
+--
+-- Report 1: Agent-wise Transactions
+-- Show total transaction count and total transaction value.
+-- Tables likely involved: transactions, users/employees/agents.
+--
+-- Report 2: Account-wise Summary
+-- Show transaction summary and current balance.
+-- Tables likely involved: savings_accounts, transactions.
+--
+-- Report 3: Active FDs
+-- Show FD, account, customer, principal, duration, rate, next payout.
+-- Tables likely involved: fixed_deposits, savings_accounts, account_holders,
+-- customers, fd_plans.
+--
+-- Report 4: Monthly Interest Distribution
+-- Show month, account type, number of interest credits, total interest distributed.
+-- Tables likely involved: interest_distribution, transactions, savings_accounts/plans.
+--
+-- Report 5: Customer Activity
+-- Show total deposits, total withdrawals, net activity.
+-- Tables likely involved: customers, account_holders, savings_accounts, transactions.
+--
+-- For every report, document joins, grouping, filtering, ordering and expected columns
+-- before writing the SQL.
