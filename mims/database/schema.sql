@@ -85,3 +85,16 @@
 -- TODO: AUDIT / SUPPORT TABLES (ONLY IF JUSTIFIED)
 -- Keep the model normalized and understandable.
 -- ============================================================
+
+-- Bank Entity
+CREATE TABLE bank ( 
+    bank_id INT AUTO_INCREMENT PRIMARY KEY, 
+    bank_code VARCHAR(20) NOT NULL UNIQUE, 
+    bank_name VARCHAR(100) NOT NULL, 
+    license_number VARCHAR(50) UNIQUE, 
+    address VARCHAR(255), 
+    email VARCHAR(100), 
+    contact_number VARCHAR(20), 
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP 
+); 
+
