@@ -39,11 +39,27 @@ CREATE TABLE agent (
     FOREIGN KEY (branch_id) REFERENCES branch(branch_id)
 );
 
--- ============================================================
--- TODO: CUSTOMERS
--- Purpose: individual customer records.
--- Required: PK, identification fields, contact fields, branch FK, assigned-agent FK.
--- ============================================================
+-- Customer Entity
+CREATE TABLE customer (
+    customer_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL UNIQUE,
+    branch_id INT NOT NULL,
+    agent_id INT NOT NULL,
+    nic VARCHAR(20) NOT NULL UNIQUE,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    date_of_birth DATE NOT NULL,
+    gender ENUM('MALE', 'FEMALE', 'OTHER') NOT NULL,
+    phone VARCHAR(20),
+    email VARCHAR(100),
+    address VARCHAR(255),
+    registered_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'ACTIVE',
+
+    FOREIGN KEY (user_id) REFERENCES user_account(user_id),
+    FOREIGN KEY (branch_id) REFERENCES branch(branch_id),
+    FOREIGN KEY (agent_id) REFERENCES agent(agent_id)
+);
 
 -- ============================================================
 -- TODO: SAVINGS_PLANS
@@ -97,49 +113,3 @@ CREATE TABLE agent (
 -- TODO: AUDIT / SUPPORT TABLES (ONLY IF JUSTIFIED)
 -- Keep the model normalized and understandable.
 -- ============================================================
-
--- Bank Entity
-CREATE TABLE bank ( 
-    bank_id INT AUTO_INCREMENT PRIMARY KEY, 
-    bank_code VARCHAR(20) NOT NULL UNIQUE, 
-    bank_name VARCHAR(100) NOT NULL, 
-    license_number VARCHAR(50) UNIQUE, 
-    address VARCHAR(255), 
-    email VARCHAR(100), 
-    contact_number VARCHAR(20), 
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP 
-); 
-
--- Branch Entity 
-CREATE TABLE branch ( 
-    branch_id INT AUTO_INCREMENT PRIMARY KEY, 
-    bank_id INT NOT NULL, 
-    branch_code VARCHAR(20) NOT NULL UNIQUE, 
-    branch_name VARCHAR(100) NOT NULL, 
-    location VARCHAR(100) NOT NULL, 
-    address VARCHAR(255), 
-    contact_number VARCHAR(20), 
-    email VARCHAR(100), 
-
-    FOREIGN KEY (bank_id) REFERENCES bank(bank_id) 
-); 
-
--- Role entity
-CREATE TABLE role ( 
-    role_id INT AUTO_INCREMENT PRIMARY KEY, 
-    role_name VARCHAR(30) NOT NULL UNIQUE 
-); 
-
--- User Account Entity
-CREATE TABLE user_account ( 
-    user_id INT AUTO_INCREMENT PRIMARY KEY, 
-    role_id INT NOT NULL, 
-    username VARCHAR(50) NOT NULL UNIQUE, 
-    password_hash VARCHAR(255) NOT NULL, 
-    status ENUM('ACTIVE', 'INACTIVE', 'LOCKED') 
-        NOT NULL DEFAULT 'ACTIVE', 
-    last_login_at DATETIME NULL, 
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
-
-    FOREIGN KEY (role_id) REFERENCES role(role_id) 
-);
