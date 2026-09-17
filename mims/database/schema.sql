@@ -1,25 +1,4 @@
--- B-Trust MIMS — MySQL relational schema
--- IMPORTANT: SQL STATEMENTS ARE INTENTIONALLY LEFT OUT.
--- The team must write the actual MySQL CREATE TABLE statements.
 
--- ============================================================
--- TODO: ROLES
--- Purpose: store the allowed application roles.
--- Required: PK, unique role name, NOT NULL constraints.
--- ============================================================
-
--- ============================================================
--- TODO: BRANCHES
--- Purpose: represent multiple B-Trust branches.
--- Required: PK, branch identity/contact fields, unique constraints as appropriate.
--- ============================================================
-
--- ============================================================
--- TODO: USERS
--- Purpose: authentication identity.
--- Required: PK, unique username/email, password_hash, role FK, active status.
--- Security: never store plaintext passwords.
--- ============================================================
 -- Bank Entity
 CREATE TABLE bank ( 
     bank_id INT AUTO_INCREMENT PRIMARY KEY, 
@@ -108,6 +87,47 @@ CREATE TABLE customer (
     FOREIGN KEY (branch_id) REFERENCES branch(branch_id),
     FOREIGN KEY (agent_id) REFERENCES agent(agent_id)
 );
+
+
+-- Savings Plan Entity
+CREATE TABLE savings_plan (
+    plan_id INT AUTO_INCREMENT PRIMARY KEY,
+    plan_name VARCHAR(30) NOT NULL UNIQUE,
+    interest_rate DECIMAL(5,2) NOT NULL,
+    minimum_balance DECIMAL(15,2) NOT NULL DEFAULT 0.00,
+    minimum_age INT,
+    maximum_age INT
+);
+
+-- Savings Account Entity
+CREATE TABLE savings_account (
+    account_id INT AUTO_INCREMENT PRIMARY KEY,
+    account_number VARCHAR(20) NOT NULL UNIQUE,
+    primary_customer_id INT NOT NULL,
+    plan_id INT NOT NULL,
+    acc_type ENUM('INDIVIDUAL', 'JOINT') NOT NULL,
+    current_balance DECIMAL(15,2) NOT NULL DEFAULT 0.00,
+    status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (primary_customer_id) REFERENCES customer(customer_id),
+    FOREIGN KEY (plan_id) REFERENCES savings_plan(plan_id)
+);
+
+
+-- Joint Account Holders Entity
+CREATE TABLE joint_account_holders (
+    account_id INT NOT NULL,
+    customer_id INT NOT NULL,
+    added_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (account_id, customer_id),
+
+    FOREIGN KEY (account_id) REFERENCES savings_account(account_id),
+    FOREIGN KEY (customer_id) REFERENCES customer(customer_id)
+);
+
+
 
 -- ============================================================
 -- TODO: SAVINGS_PLANS
