@@ -21,11 +21,23 @@
 -- Security: never store plaintext passwords.
 -- ============================================================
 
--- ============================================================
--- TODO: EMPLOYEES / AGENTS
--- Purpose: employee profile and branch relationship.
--- Required: PK, user relationship, branch FK, employee/agent fields.
--- ============================================================
+-- Agent Entity
+CREATE TABLE agent (
+    agent_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL UNIQUE,
+    branch_id INT NOT NULL,
+    agent_code VARCHAR(20) NOT NULL UNIQUE,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    nic VARCHAR(20) NOT NULL UNIQUE,
+    phone VARCHAR(20),
+    email VARCHAR(100),
+    status ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'ACTIVE',
+    joined_date DATE,
+
+    FOREIGN KEY (user_id) REFERENCES user_account(user_id),
+    FOREIGN KEY (branch_id) REFERENCES branch(branch_id)
+);
 
 -- ============================================================
 -- TODO: CUSTOMERS
