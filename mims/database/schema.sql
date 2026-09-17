@@ -98,3 +98,16 @@ CREATE TABLE bank (
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP 
 ); 
 
+-- Branch Entity 
+CREATE TABLE branch ( 
+    branch_id INT AUTO_INCREMENT PRIMARY KEY, 
+    bank_id INT NOT NULL, 
+    branch_code VARCHAR(20) NOT NULL UNIQUE, 
+    branch_name VARCHAR(100) NOT NULL, 
+    location VARCHAR(100) NOT NULL, 
+    address VARCHAR(255), 
+    contact_number VARCHAR(20), 
+    email VARCHAR(100), 
+
+    FOREIGN KEY (bank_id) REFERENCES bank(bank_id) 
+); 
