@@ -157,6 +157,23 @@ CREATE TABLE joint_account_holders (
 -- Required: PK, account FK, transaction type constraint, positive amount,
 -- timestamp, unique reference, acting user/agent FK, status and metadata.
 -- ============================================================
+CREATE TABLE account_transaction (
+    transaction_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    transaction_ref VARCHAR(50) NOT NULL UNIQUE,
+    account_id INT NOT NULL,
+    agent_id INT NULL,
+    transaction_type ENUM(
+        'DEPOSIT',
+        'WITHDRAWAL',
+        'INTEREST_CREDIT'
+    ) NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    balance_after DECIMAL(15,2) NOT NULL,
+    transaction_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (account_id) REFERENCES savings_account(account_id),
+    FOREIGN KEY (agent_id) REFERENCES agent(agent_id)
+);
 
 -- ============================================================
 -- TODO: FD_PLANS
