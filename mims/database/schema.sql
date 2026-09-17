@@ -111,3 +111,9 @@ CREATE TABLE branch (
 
     FOREIGN KEY (bank_id) REFERENCES bank(bank_id) 
 ); 
+
+-- Role entity
+CREATE TABLE role ( 
+    role_id INT AUTO_INCREMENT PRIMARY KEY, 
+    role_name VARCHAR(30) NOT NULL UNIQUE 
+); 
