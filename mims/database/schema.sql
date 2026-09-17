@@ -20,6 +20,54 @@
 -- Required: PK, unique username/email, password_hash, role FK, active status.
 -- Security: never store plaintext passwords.
 -- ============================================================
+-- Bank Entity
+CREATE TABLE bank ( 
+    bank_id INT AUTO_INCREMENT PRIMARY KEY, 
+    bank_code VARCHAR(20) NOT NULL UNIQUE, 
+    bank_name VARCHAR(100) NOT NULL, 
+    license_number VARCHAR(50) UNIQUE, 
+    address VARCHAR(255), 
+    email VARCHAR(100), 
+    contact_number VARCHAR(20), 
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP 
+); 
+
+
+-- Branch Entity 
+CREATE TABLE branch ( 
+    branch_id INT AUTO_INCREMENT PRIMARY KEY, 
+    bank_id INT NOT NULL, 
+    branch_code VARCHAR(20) NOT NULL UNIQUE, 
+    branch_name VARCHAR(100) NOT NULL, 
+    location VARCHAR(100) NOT NULL, 
+    address VARCHAR(255), 
+    contact_number VARCHAR(20), 
+    email VARCHAR(100), 
+
+    FOREIGN KEY (bank_id) REFERENCES bank(bank_id) 
+); 
+
+
+-- Role entity
+CREATE TABLE role ( 
+    role_id INT AUTO_INCREMENT PRIMARY KEY, 
+    role_name VARCHAR(30) NOT NULL UNIQUE 
+); 
+
+
+-- User Account Entity
+CREATE TABLE user_account ( 
+    user_id INT AUTO_INCREMENT PRIMARY KEY, 
+    role_id INT NOT NULL, 
+    username VARCHAR(50) NOT NULL UNIQUE, 
+    password_hash VARCHAR(255) NOT NULL, 
+    status ENUM('ACTIVE', 'INACTIVE', 'LOCKED') 
+        NOT NULL DEFAULT 'ACTIVE', 
+    last_login_at DATETIME NULL, 
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+
+    FOREIGN KEY (role_id) REFERENCES role(role_id) 
+);
 
 -- Agent Entity
 CREATE TABLE agent (
