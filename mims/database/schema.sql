@@ -192,4 +192,3 @@ CREATE TABLE interest_distribution (
     FOREIGN KEY (transaction_id)
         REFERENCES account_transaction(transaction_id)
 );
-
