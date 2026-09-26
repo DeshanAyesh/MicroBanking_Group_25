@@ -48,8 +48,7 @@ function isWithinBusinessHours(now: Date = new Date()): boolean {
 //ui->post api->permission check->input checks ->db look ups ->save ->response to ui
 export async function POST(request: NextRequest) {
   // Only admins and agents can open accounts.
- const session = requireRole(request, ["ADMIN", "AGENT"]);
-
+const session = requireRole(request, ["AGENT"]);
 if (!session) {
     return NextResponse.json(
       { message: "Unauthorized." },
