@@ -3,14 +3,14 @@ import { requireRole } from "@/lib/auth/authorization";
 import { getDbPool } from "@/lib/db/mysql";
 
 export async function GET(request: NextRequest) {
-  // // const session = requireRole(request, ["ADMIN", "AGENT"]);
+  const session = requireRole(request, ["ADMIN", "AGENT"]);
 
-  // // if (!session) {
-  // //   return NextResponse.json(
-  // //     { message: "Unauthorized." },
-  // //     { status: 401 }
-  // //   );
-  // }
+  if (!session) {
+    return NextResponse.json(
+      { message: "Unauthorized." },
+      { status: 401 }
+    );
+  }
 
   try {
     const pool = getDbPool();
