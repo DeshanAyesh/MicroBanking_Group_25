@@ -1,25 +1,64 @@
--- REPORT SQL TODOs — DO NOT WRITE QUERIES.
---
--- Report 1: Agent-wise Transactions
--- Show total transaction count and total transaction value.
--- Tables likely involved: transactions, users/employees/agents.
---
--- Report 2: Account-wise Summary
--- Show transaction summary and current balance.
--- Tables likely involved: savings_accounts, transactions.
---
--- Report 3: Active FDs
--- Show FD, account, customer, principal, duration, rate, next payout.
--- Tables likely involved: fixed_deposits, savings_accounts, account_holders,
--- customers, fd_plans.
---
--- Report 4: Monthly Interest Distribution
--- Show month, account type, number of interest credits, total interest distributed.
--- Tables likely involved: interest_distribution, transactions, savings_accounts/plans.
---
 -- Report 5: Customer Activity
--- Show total deposits, total withdrawals, net activity.
--- Tables likely involved: customers, account_holders, savings_accounts, transactions.
---
--- For every report, document joins, grouping, filtering, ordering and expected columns
--- before writing the SQL.
+
+-- Joins:
+-- customer:
+-- Used to retrieve customer information.
+
+-- savings_account:
+-- Used to identify individual account ownership.
+
+-- joint_account_holders:
+-- Used to identify joint account ownership.
+
+-- account_transaction:
+-- Used to calculate deposits and withdrawals.
+
+-- Grouping:
+-- Group by customer_id, first_name and last_name
+-- to calculate totals per customer.
+
+-- Filtering:
+-- Only DEPOSIT and WITHDRAWAL transactions are included.
+
+-- Ordering:
+-- Results are ordered by customer_id.
+
+-- Expected columns:
+-- customer_id
+-- customer_name
+-- total_deposits
+-- total_withdrawals
+-- net_activity
+
+
+/*
+SELECT 
+    c.customer_id,
+    CONCAT(c.first_name,' ',c.last_name) AS customer_name,
+
+    SUM(
+      CASE 
+        WHEN t.transaction_type='DEPOSIT'
+        THEN t.amount
+        ELSE 0
+      END
+    ) AS total_deposits,
+
+    SUM(
+      CASE 
+        WHEN t.transaction_type='WITHDRAWAL'
+        THEN t.amount
+        ELSE 0
+      END
+    ) AS total_withdrawals
+
+FROM customer c
+
+LEFT JOIN savings_account sa
+ON sa.primary_customer_id=c.customer_id
+
+LEFT JOIN account_transaction t
+ON t.account_id=sa.account_id
+
+GROUP BY c.customer_id;
+*/
