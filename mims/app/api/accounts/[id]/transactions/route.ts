@@ -69,21 +69,20 @@ export async function GET(
 
     const [transactions] = await pool.execute<RowDataPacket[]>(
       `SELECT
-          at.transaction_id,
-          at.transaction_ref,
-          at.transaction_type,
-          at.amount,
-          at.balance_after,
-          at.transaction_date,
-          CASE
-            WHEN a.agent_id IS NULL THEN NULL
-            ELSE CONCAT(a.first_name, ' ', a.last_name)
-          END AS agent_name
-       FROM account_transaction at
+          t.transaction_id,
+          t.transaction_ref,
+          t.account_id,
+          t.transaction_type,
+          t.amount,
+          t.balance_after,
+          t.transaction_date,
+          t.agent_id,
+          CONCAT(a.first_name, ' ', a.last_name) AS agent_name
+       FROM account_transaction t
        LEFT JOIN agent a
-         ON a.agent_id = at.agent_id
-       WHERE at.account_id = ?
-       ORDER BY at.transaction_date DESC, at.transaction_id DESC`,
+         ON a.agent_id = t.agent_id
+       WHERE t.account_id = ?
+       ORDER BY t.transaction_date DESC, t.transaction_id DESC`,
       [accountId]
     );
 
