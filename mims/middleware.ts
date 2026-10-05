@@ -32,8 +32,13 @@ export function middleware(request: NextRequest) {
        return NextResponse.redirect(new URL("/login", request.url));
     }
 
-    if ((path.startsWith("/agent") || path.startsWith("/customers") || path.startsWith("/accounts") || path.startsWith("/transactions") || path.startsWith("/fixed-deposits")) 
+    if ((path.startsWith("/agent") || path.startsWith("/customers") || path.startsWith("/fixed-deposits") || path.startsWith("/reports")) 
          && session.role !== "AGENT" && session.role !== "ADMIN") {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+
+    // Accounts and Transactions are accessed by CUSTOMER, AGENT, ADMIN
+    if ((path.startsWith("/accounts") || path.startsWith("/transactions")) && session.role !== "CUSTOMER" && session.role !== "AGENT" && session.role !== "ADMIN") {
       return NextResponse.redirect(new URL("/login", request.url));
     }
   }

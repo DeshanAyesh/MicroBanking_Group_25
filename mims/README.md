@@ -13,15 +13,6 @@ A small, understandable university Database Systems project for a Sri Lankan mic
 - `bcryptjs` for password hashing
 - JWT-based authentication structure
 
-## Important SQL rule
-
-**The final SQL is intentionally NOT implemented.**
-
-Every database SQL file contains documented TODO placeholders. The application is structured so the five-person team can write and understand the SQL themselves.
-
-This applies to schema, seed data, SELECT/JOIN/report queries, procedures, functions, triggers, indexes, and transaction SQL.
-
-When an API depends on unfinished SQL, it returns a clear `BLOCKED — SQL TODO required` response instead of pretending that a banking operation succeeded.
 
 ## Run
 
@@ -34,8 +25,15 @@ npm install
 
 3. Copy `.env.example` to `.env.local`.
 4. Fill in the MySQL connection values and JWT secret.
-5. Create/select the MySQL database manually.
-6. Complete the TODOs in `database/` with your team's SQL.
+5. Create the MySQL database manually.
+6. Execute the SQL scripts located in `database/` in the following order to set up the schema, functions, triggers, procedures, and seed data:
+   - `schema.sql`
+   - `indexes.sql`
+   - `functions.sql`
+   - `procedures.sql`
+   - `triggers.sql`
+   - `reports.sql`
+   - `seed.sql`
 7. Start development:
 
 ```bash
@@ -64,6 +62,4 @@ Open http://localhost:3000.
 
 ## Current status
 
-The UI, routing, API contracts, validation, authentication helpers, MySQL connection layer, and database TODO documentation are scaffolded.
-
-Database-dependent operations remain intentionally blocked until your team writes the SQL.
+The UI, routing, API contracts, validation, authentication helpers, MySQL connection layer, and database SQL implementation are complete. The project is fully functional according to the provided requirements.
