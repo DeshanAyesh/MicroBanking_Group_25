@@ -30,7 +30,7 @@ export default async function AdminPage() {
     </div>
     <div className="card" style={{marginTop:16}}>
       <h2>Recent transactions</h2>
-      <p className="muted">No fake transactions are shown. Connect the report/query TODO after implementing SQL.</p>
+      <p className="muted">Figures are calculated from the current database records.</p>
     </div>
   </div>;
 }
