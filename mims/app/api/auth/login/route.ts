@@ -1,26 +1,54 @@
 import { NextResponse } from "next/server";
 import { signSession } from "@/lib/auth/jwt";
 import { requireNonEmpty } from "@/lib/validation/common";
+import { getDbPool } from "@/lib/db/mysql";
+import { verifyPassword } from "@/lib/auth/password";
+import { RowDataPacket } from "mysql2";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const identifier = requireNonEmpty(body.identifier, "Username/email");
-    requireNonEmpty(body.password, "Password");
+    const password = requireNonEmpty(body.password, "Password");
 
-    /*
-      SQL TODO:
-      Tables: users, roles (and any employee/customer relationship tables).
-      Purpose: find the active user by username/email and retrieve the password hash and role.
-      Conditions: active account; unique identifier.
-      Expected result: one user record containing id, password_hash and role.
-      Transaction: no.
-    */
-    console.log("LOGIN SQL TODO", identifier);
+    const pool = getDbPool();
+    const [rows] = await pool.query<RowDataPacket[]>(
+      `SELECT u.user_id, u.password_hash, r.role_name, u.status 
+       FROM user_account u
+       JOIN role r ON u.role_id = r.role_id
+       WHERE u.username = ?`,
+      [identifier]
+    );
 
-    return NextResponse.json({
-      message: "BLOCKED — SQL TODO required: user lookup/authentication query is not implemented."
-    }, { status: 501 });
+    if (rows.length === 0) {
+      return NextResponse.json({ message: "Invalid username or password." }, { status: 401 });
+    }
+
+    const user = rows[0];
+
+    if (user.status !== 'ACTIVE') {
+      return NextResponse.json({ message: "Account is not active." }, { status: 403 });
+    }
+
+    const isValid = await verifyPassword(password, user.password_hash);
+    if (!isValid) {
+      return NextResponse.json({ message: "Invalid username or password." }, { status: 401 });
+    }
+
+    const token = signSession({
+      userId: Number(user.user_id),
+      role: user.role_name as "ADMIN" | "AGENT" | "CUSTOMER"
+    });
+
+    const response = NextResponse.json({ message: "Login successful.", role: user.role_name });
+    response.cookies.set("mims_session", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/"
+    });
+
+    return response;
   } catch (error) {
     return NextResponse.json({ message: error instanceof Error ? error.message : "Invalid request." }, { status: 400 });
   }
