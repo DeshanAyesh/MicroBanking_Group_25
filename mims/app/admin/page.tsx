@@ -1,15 +1,33 @@
-import { BlockedNotice } from "@/components/BlockedNotice";
 import { PageHeader } from "@/components/PageHeader";
+import { getDbPool } from "@/lib/db/mysql";
+import { RowDataPacket } from "mysql2";
 
-const stats = ["Total customers","Savings accounts","Total deposits","Total withdrawals","Active FDs","Interest distributed"];
+export const dynamic = 'force-dynamic';
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  const pool = getDbPool();
+  
+  const [[{ count: totalCustomers }]] = await pool.query<RowDataPacket[]>("SELECT COUNT(*) as count FROM customer");
+  const [[{ count: savingsAccounts }]] = await pool.query<RowDataPacket[]>("SELECT COUNT(*) as count FROM savings_account");
+  const [[{ total: totalDeposits }]] = await pool.query<RowDataPacket[]>("SELECT COALESCE(SUM(amount), 0) as total FROM account_transaction WHERE transaction_type = 'DEPOSIT'");
+  const [[{ total: totalWithdrawals }]] = await pool.query<RowDataPacket[]>("SELECT COALESCE(SUM(amount), 0) as total FROM account_transaction WHERE transaction_type = 'WITHDRAWAL'");
+  const [[{ count: activeFDs }]] = await pool.query<RowDataPacket[]>("SELECT COUNT(*) as count FROM fixed_deposit WHERE status = 'ACTIVE'");
+  const [[{ total: interestDistributed }]] = await pool.query<RowDataPacket[]>("SELECT COALESCE(SUM(interest_amount), 0) as total FROM interest_distribution");
+
+  const stats = [
+    { label: "Total customers", value: totalCustomers },
+    { label: "Savings accounts", value: savingsAccounts },
+    { label: "Total deposits", value: totalDeposits },
+    { label: "Total withdrawals", value: totalWithdrawals },
+    { label: "Active FDs", value: activeFDs },
+    { label: "Interest distributed", value: interestDistributed },
+  ];
+
   return <div className="container">
     <PageHeader title="Admin Dashboard" description="Database-backed management overview." />
     <div className="grid grid-3">
-      {stats.map(s=><div className="card" key={s}><div className="muted small">{s}</div><div className="stat">—</div><div className="small muted">SQL TODO</div></div>)}
+      {stats.map(s=><div className="card" key={s.label}><div className="muted small">{s.label}</div><div className="stat">{s.value}</div></div>)}
     </div>
-    <div style={{marginTop:16}}><BlockedNotice operation="dashboard aggregate queries" /></div>
     <div className="card" style={{marginTop:16}}>
       <h2>Recent transactions</h2>
       <p className="muted">No fake transactions are shown. Connect the report/query TODO after implementing SQL.</p>

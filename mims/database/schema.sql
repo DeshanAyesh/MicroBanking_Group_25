@@ -127,36 +127,7 @@ CREATE TABLE joint_account_holders (
     FOREIGN KEY (customer_id) REFERENCES customer(customer_id)
 );
 
-
-
--- ============================================================
--- TODO: SAVINGS_PLANS
--- Purpose: Children 12%/LKR0; Teen 11%/LKR500; Adult (18+) 10%/LKR1000;
--- Senior (60+) 13%/LKR1000; Joint 7%/LKR5000.
--- Avoid duplicating plan values in every account.
--- ============================================================
-
--- ============================================================
--- TODO: SAVINGS_ACCOUNTS
--- Purpose: account identity, selected plan, balance and status.
--- Required: PK, plan FK, account number uniqueness, non-negative balance,
--- status constraints and timestamps.
--- ============================================================
-
--- ============================================================
--- TODO: ACCOUNT_HOLDERS
--- Purpose: proper many-to-many relationship between savings accounts and customers.
--- Required: composite/unique relationship constraint; holder role/primary-holder
--- semantics if needed.
--- IMPORTANT: never store comma-separated customer IDs.
--- ============================================================
-
--- ============================================================
--- TODO: TRANSACTIONS
--- Purpose: DEPOSIT, WITHDRAWAL, INTEREST_CREDIT records.
--- Required: PK, account FK, transaction type constraint, positive amount,
--- timestamp, unique reference, acting user/agent FK, status and metadata.
--- ============================================================
+-- Account Transaction Entity
 CREATE TABLE account_transaction (
     transaction_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     transaction_ref VARCHAR(50) NOT NULL UNIQUE,
@@ -175,26 +146,49 @@ CREATE TABLE account_transaction (
     FOREIGN KEY (agent_id) REFERENCES agent(agent_id)
 );
 
--- ============================================================
--- TODO: FD_PLANS
--- Purpose: 6 months 13%; 1 year 14%; 3 years 15%.
--- ============================================================
 
--- ============================================================
--- TODO: FIXED_DEPOSITS
--- Purpose: one active FD per savings account.
--- Required: PK, account FK, plan/duration FK, principal, start/maturity dates,
--- rate, status, next interest payout date, uniqueness enforcing maximum one FD
--- per savings account according to the chosen business rule.
--- ============================================================
+-- Fixed Deposit Plan Entity
+CREATE TABLE fixed_deposit_plan (
+    fd_plan_id INT AUTO_INCREMENT PRIMARY KEY,
+    plan_name VARCHAR(50) NOT NULL UNIQUE,
+    term_months INT NOT NULL,
+    interest_rate DECIMAL(5,2) NOT NULL
+);
 
--- ============================================================
--- TODO: INTEREST_DISTRIBUTION
--- Purpose: record each FD interest credit and its relationship to an FD/account
--- and transaction. Enforce appropriate uniqueness for a 30-day payout cycle.
--- ============================================================
 
--- ============================================================
--- TODO: AUDIT / SUPPORT TABLES (ONLY IF JUSTIFIED)
--- Keep the model normalized and understandable.
--- ============================================================
+-- Fixed Deposit Entity
+CREATE TABLE fixed_deposit (
+    fd_id INT AUTO_INCREMENT PRIMARY KEY,
+    fd_number VARCHAR(20) NOT NULL UNIQUE,
+    linked_account_id INT NOT NULL UNIQUE,
+    fd_plan_id INT NOT NULL,
+    deposit_amount DECIMAL(15,2) NOT NULL,
+    start_date DATE NOT NULL,
+    maturity_date DATE NOT NULL,
+    next_payout_date DATE NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
+
+    FOREIGN KEY (linked_account_id)
+        REFERENCES savings_account(account_id),
+
+    FOREIGN KEY (fd_plan_id)
+        REFERENCES fixed_deposit_plan(fd_plan_id)
+);
+
+-- Interest Distribution Entity
+CREATE TABLE interest_distribution (
+    distribution_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    fd_id INT NOT NULL,
+    transaction_id BIGINT NOT NULL UNIQUE,
+    cycle_number INT NOT NULL,
+    cycle_start_date DATE NOT NULL,
+    cycle_end_date DATE NOT NULL,
+    interest_amount DECIMAL(15,2) NOT NULL,
+    distributed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (fd_id)
+        REFERENCES fixed_deposit(fd_id),
+
+    FOREIGN KEY (transaction_id)
+        REFERENCES account_transaction(transaction_id)
+);
