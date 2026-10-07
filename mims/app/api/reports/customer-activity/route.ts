@@ -4,7 +4,7 @@ import { getDbPool } from "@/lib/db/mysql";
 
 export async function GET(request: NextRequest) {
 
-  if (!requireRole(request, ["ADMIN","AGENT","CUSTOMER"])) {
+  if (!requireRole(request, ["ADMIN","AGENT"])) {
     return NextResponse.json(
       { message: "Unauthorized." },
       { status: 401 }
