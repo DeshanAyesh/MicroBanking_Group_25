@@ -1,96 +1,44 @@
 "use client";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/PageHeader";
 
+type Branch = { branch_id: number; branch_code: string; branch_name: string };
+type Agent = { agent_id: number; branch_id: number; agent_code: string; first_name: string; last_name: string };
+
 export default function NewCustomer() {
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  async function submit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setMessage("");
-    setError("");
-    setLoading(true);
-
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
-
+  const router = useRouter();
+  const [branches, setBranches] = useState<Branch[]>([]); const [agents, setAgents] = useState<Agent[]>([]);
+  const [message, setMessage] = useState(""); const [saving, setSaving] = useState(false);
+  const [branchId, setBranchId] = useState(""); const [agentId, setAgentId] = useState("");
+  useEffect(() => { fetch("/api/customers/options").then(async r => { const d = await r.json(); if (!r.ok) throw new Error(d.message); setBranches(d.branches); setAgents(d.agents); }).catch(e => setMessage(e.message || "Unable to load form options.")); }, []);
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault(); setMessage(""); setSaving(true);
+    const form = new FormData(event.currentTarget);
+    const body = Object.fromEntries(form.entries());
+    body.branch_id = branchId; body.agent_id = agentId;
     try {
-      const res = await fetch("/api/customers", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: data.username,
-          password: data.password,
-          branch_id: Number(data.branch_id),
-          agent_id: Number(data.agent_id),
-          nic: data.nic,
-          first_name: data.first_name,
-          last_name: data.last_name,
-          date_of_birth: data.date_of_birth,
-          gender: data.gender,
-          phone: data.phone || null,
-          email: data.email || null,
-          address: data.address || null
-        }),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        setError(result.message || "Failed to create customer.");
-      } else {
-        setMessage("Customer created successfully.");
-        e.currentTarget.reset();
-      }
-    } catch (err) {
-      console.error(err);
-      setError("An unexpected error occurred.");
-    } finally {
-      setLoading(false);
-    }
+      const response = await fetch("/api/customers", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      const data = await response.json(); if (!response.ok) throw new Error(data.message || "Unable to create customer.");
+      router.push("/customers"); router.refresh();
+    } catch (error) { setMessage(error instanceof Error ? error.message : "Unable to create customer."); } finally { setSaving(false); }
   }
-
-  return (
-    <div className="container" style={{ maxWidth: 800 }}>
-      <PageHeader title="Register Customer" description="Collect only the fields required by the relational design." />
-      
-      {message && <div style={{ marginBottom: 15, padding: 12, backgroundColor: "#d4edda", color: "#155724", borderRadius: 4 }}>{message}</div>}
-      {error && <div style={{ marginBottom: 15, padding: 12, backgroundColor: "#f8d7da", color: "#721c24", borderRadius: 4 }}>{error}</div>}
-
-      <form className="card form" onSubmit={submit}>
-        <div className="grid grid-2">
-          <div className="field"><label>Username</label><input name="username" required /></div>
-          <div className="field"><label>Password</label><input type="password" name="password" required /></div>
-
-          <div className="field"><label>First name</label><input name="first_name" required /></div>
-          <div className="field"><label>Last name</label><input name="last_name" required /></div>
-
-          <div className="field"><label>NIC / identification</label><input name="nic" required /></div>
-          <div className="field"><label>Date of Birth</label><input type="date" name="date_of_birth" required /></div>
-
-          <div className="field">
-            <label>Gender</label>
-            <select name="gender" required defaultValue="">
-              <option value="" disabled>Select gender</option>
-              <option value="MALE">Male</option>
-              <option value="FEMALE">Female</option>
-              <option value="OTHER">Other</option>
-            </select>
-          </div>
-          <div className="field"><label>Phone</label><input name="phone" /></div>
-
-          <div className="field"><label>Email</label><input type="email" name="email" /></div>
-          <div className="field"><label>Address</label><input name="address" /></div>
-
-          <div className="field"><label>Branch ID</label><input type="number" name="branch_id" required /></div>
-          <div className="field"><label>Assigned Agent ID</label><input type="number" name="agent_id" required /></div>
-        </div>
-        <button className="btn" disabled={loading}>
-          {loading ? "Creating..." : "Create customer"}
-        </button>
-      </form>
-    </div>
-  );
+  const availableAgents = branchId ? agents.filter(agent => agent.branch_id === Number(branchId)) : agents;
+  return <div className="container" style={{maxWidth:800}}>
+    <PageHeader title="Register Customer" description="Create the customer's login and profile together in one database transaction." />
+    <form className="card form" onSubmit={submit}>
+      <div className="grid grid-2">
+        <div className="field"><label>Username</label><input name="username" required /></div><div className="field"><label>Temporary password</label><input name="password" type="password" minLength={8} required /></div>
+        <div className="field"><label>First name</label><input name="first_name" required /></div><div className="field"><label>Last name</label><input name="last_name" required /></div>
+        <div className="field"><label>NIC / identification</label><input name="nic" required /></div><div className="field"><label>Date of birth</label><input name="date_of_birth" type="date" required /></div>
+        <div className="field"><label>Gender</label><select name="gender" required defaultValue=""><option value="" disabled>Select gender</option><option value="MALE">Male</option><option value="FEMALE">Female</option><option value="OTHER">Other</option></select></div><div className="field"><label>Phone</label><input name="phone" /></div>
+        <div className="field"><label>Email</label><input name="email" type="email" /></div><div className="field"><label>Address</label><input name="address" /></div>
+        <div className="field"><label>Branch</label><select value={branchId} onChange={event => { setBranchId(event.target.value); setAgentId(""); }} required><option value="">Select branch</option>{branches.map(branch => <option key={branch.branch_id} value={branch.branch_id}>{branch.branch_code} — {branch.branch_name}</option>)}</select></div>
+        <div className="field"><label>Assigned agent</label><select value={agentId} onChange={event => setAgentId(event.target.value)} required><option value="">Select agent</option>{availableAgents.map(agent => <option key={agent.agent_id} value={agent.agent_id}>{agent.agent_code} — {agent.first_name} {agent.last_name}</option>)}</select></div>
+      </div>
+      <button className="btn" disabled={saving}>{saving ? "Creating..." : "Create customer"}</button>{message && <p className="error">{message}</p>}
+    </form>
+  </div>;
 }
+
+
