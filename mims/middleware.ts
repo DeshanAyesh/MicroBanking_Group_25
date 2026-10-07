@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionFromRequest } from "@/lib/auth/authorization";
-
+export const runtime = "nodejs";
 export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   
@@ -39,6 +39,12 @@ export function middleware(request: NextRequest) {
 
     // Accounts and Transactions are accessed by CUSTOMER, AGENT, ADMIN
     if ((path.startsWith("/accounts") || path.startsWith("/transactions")) && session.role !== "CUSTOMER" && session.role !== "AGENT" && session.role !== "ADMIN") {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+
+    // Customers can view only their own records; an agent opens accounts and
+    // processes transactions on their behalf.
+    if (session.role !== "AGENT" && (path === "/accounts/new" || path === "/transactions/new" || path === "/fixed-deposits/new")) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
   }
