@@ -154,8 +154,8 @@ BEGIN
 END$$
 
 DELIMITER ;
-=======
-Atomic Deposit and Withdrawal operations
+
+-- Atomic Deposit and Withdrawal operations
 
 
 DROP PROCEDURE IF EXISTS deposit;
