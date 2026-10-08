@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";  
-//nextrequest ->incoming request
-//nextresponse -> respose back to ui
 
 import { requireRole } from "@/lib/auth/authorization"; //requireRole checks the login-session cookie and verifies that the requester has an allowed role.
-// It checks the person operating the system—not the customer whose account is being opened.
 import { getDbPool } from "@/lib/db/mysql";
 import type { RowDataPacket, ResultSetHeader } 
 from "mysql2";import type { PoolConnection } from "mysql2/promise";
@@ -125,12 +122,9 @@ function isWithinBusinessHours(now: Date = new Date()): boolean {
     minutesSinceMidnight >= 9 * 60 &&
     minutesSinceMidnight < 15 * 60
   );
-  // return true; // TEMPORARY: allows testing outside business hours
 }
 
-//ui->post api->permission check->input checks ->db look ups ->save ->response to ui
 export async function POST(request: NextRequest) {
-  // Only admins and agents can open accounts.
 const session = requireRole(request, ["AGENT"]);
 if (!session) {
     return NextResponse.json(
@@ -139,7 +133,6 @@ if (!session) {
     );
   }
 
-  //  Read the JSON sent by the form.
   let body;
   let connection: PoolConnection | undefined;
   let transactionStarted = false;
@@ -152,7 +145,6 @@ if (!session) {
     );
   }
 
-  // 3. Make sure the submitted data is an object.
   if (!body || typeof body !== "object" || Array.isArray(body)) {
     return NextResponse.json(
       { message: "Invalid account details." },
@@ -160,7 +152,6 @@ if (!session) {
     );
   }
 
-  //  Extract the account details.
  const {
   planId,
   primaryCustomerId,
@@ -168,14 +159,12 @@ if (!session) {
   holderIds,
   openingDeposit,
 } = body;
-  //checking paln id
 
   if (!Number.isSafeInteger(planId) || planId <= 0) {
     return NextResponse.json(
       { message: "Plan ID must be a positive whole number." },
       { status: 400 }
     );}
-  //checking customer id
 
   if (
     !Number.isSafeInteger(primaryCustomerId) ||
@@ -187,7 +176,6 @@ if (!session) {
     );
   }
 
-  //checking acc type
   if (
   accountType !== "INDIVIDUAL" &&
   accountType !== "JOINT"
@@ -198,7 +186,6 @@ if (!session) {
   );
 }
 
-//account holders array check
 if (!Array.isArray(holderIds)) {
   return NextResponse.json(
     { message: "Account holders must be provided as a list." },
@@ -220,7 +207,6 @@ if (
     { status: 400 }
   );
 }
-  //duplicate check
   if (new Set(holderIds).size !== holderIds.length) {
   return NextResponse.json(
     { message: "The same customer cannot be added more than once." },
@@ -228,7 +214,6 @@ if (
   );
 }
 
-// The primary customer must be one of the account holders.
 if (!holderIds.includes(primaryCustomerId)) {
   return NextResponse.json(
     { message: "The primary customer must be included in the holders." },
@@ -236,7 +221,6 @@ if (!holderIds.includes(primaryCustomerId)) {
   );
 }
 
-// An individual account must have exactly one holder.
 if (accountType === "INDIVIDUAL" && holderIds.length !== 1) {
   return NextResponse.json(
     { message: "An individual account must have exactly one holder." },
@@ -244,7 +228,6 @@ if (accountType === "INDIVIDUAL" && holderIds.length !== 1) {
   );
 }
 
-// A joint account must have at least two distinct holders.
 if (accountType === "JOINT" && holderIds.length < 2) {
   return NextResponse.json(
     { message: "A joint account must have at least two holders." },
@@ -264,7 +247,6 @@ if (
   );
 }
 
-// Convert decimal amounts into whole cents for exact comparison.
 const toCents = (amount: string): bigint => {
   const [whole, fraction = ""] = amount.split(".");
 
@@ -282,13 +264,11 @@ if (!isWithinBusinessHours()) {
     { status: 403 }
   );
 }
-  // Account creation will be added in the next steps.
  try {
 connection = await getDbPool().getConnection();
 await connection.beginTransaction();
 transactionStarted = true;
 
-  // 1. Find the selected savings plan.
   const [plans] = await connection.execute<RowDataPacket[]>(
     `SELECT plan_id, plan_name, minimum_age,
             maximum_age, minimum_balance
@@ -319,7 +299,6 @@ transactionStarted = true;
   );
 }
 
-  // 2. Find all selected holders.
   const placeholders = holderIds.map(() => "?").join(", ");
 
   const [customers] = await connection.execute<RowDataPacket[]>(
@@ -339,7 +318,6 @@ transactionStarted = true;
       { status: 400 }
     );
   }
-  // Make sure the selected plan matches the account type.
 const isJointPlan = plan.plan_name.toLowerCase() === "joint";
 
 if (
@@ -352,7 +330,6 @@ if (
   );
 }
 
-// Check every holder's status and age.
 for (const customer of customers) {
   if (customer.status !== "ACTIVE") {
     return NextResponse.json(
@@ -387,8 +364,6 @@ for (const customer of customers) {
   }
 }
 
-  // Eligibility checks and account creation come next.
-// Find the acting agent's database ID.
 let agentId: number | null = null;
 
 if (session.role === "AGENT") {
@@ -410,11 +385,9 @@ if (session.role === "AGENT") {
   agentId = agents[0].agent_id;
 }
 
-// Generate a 20-character account number.
 const accountNumber =
   "SA" + randomBytes(9).toString("hex").toUpperCase();
 
-// Create the savings account.
 const [result] = await connection.execute<ResultSetHeader>(
   `INSERT INTO savings_account
      (account_number, primary_customer_id, plan_id,
@@ -431,7 +404,6 @@ const [result] = await connection.execute<ResultSetHeader>(
 
 const accountId = result.insertId;
 
-// Store every joint holder, including the primary customer.
 if (accountType === "JOINT") {
   for (const customerId of holderIds) {
     await connection.execute(
@@ -443,8 +415,6 @@ if (accountType === "JOINT") {
   }
 }
 
-// Record opening funds as a deposit.
-// A zero-balance Children's account has no opening transaction.
 if (toCents(openingDeposit) > BigInt(0)) {
   await connection.execute(
     `INSERT INTO account_transaction
@@ -461,7 +431,6 @@ if (toCents(openingDeposit) > BigInt(0)) {
   );
 }
 
-// Save all changes together.
 await connection.commit();
 transactionStarted = false;
 

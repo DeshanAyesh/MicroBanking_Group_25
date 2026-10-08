@@ -123,7 +123,6 @@ td strong { color: #123b60; }
 td a strong { color: #0a6998; }
 
 .notice { padding: 14px 16px; border: 1px solid #bde6d1; border-radius: 10px; background: #edfbf3; color: #126542; font-weight: 650; }
-.blocked { padding: 14px; border: 1px solid #f3c4c0; border-radius: 10px; background: #fff0ef; color: var(--danger); font-weight: 700; }
 .error { margin: 0; color: var(--danger); font-size: 13px; font-weight: 650; }
 
 .login-shell { display: grid; min-height: calc(100vh - 72px); place-items: center; padding-top: 44px; padding-bottom: 62px; }
