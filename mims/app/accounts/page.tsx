@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
 
 type Account = {
@@ -27,6 +27,23 @@ export default function AccountsPage() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [query, setQuery] = useState("");
+  const [role, setRole] = useState("");
+
+  const visibleAccounts = useMemo(() => {
+    const term = query.trim().toLowerCase();
+    if (!term) return accounts;
+    return accounts.filter((account) =>
+      `${account.account_number} ${account.plan_name} ${account.primary_customer_name} ${account.holder_names}`
+        .toLowerCase()
+        .includes(term)
+    );
+  }, [accounts, query]);
+
+  const totalBalance = useMemo(
+    () => accounts.reduce((total, account) => total + Number(account.current_balance), 0),
+    [accounts]
+  );
 
   useEffect(() => {
     async function loadAccounts() {
@@ -51,6 +68,10 @@ export default function AccountsPage() {
     loadAccounts();
   }, []);
 
+  useEffect(() => {
+    fetch("/api/auth/me").then(async response => response.ok ? response.json() : null).then(data => setRole(data?.session?.role ?? "")).catch(() => undefined);
+  }, []);
+
   return (
     <div className="container">
       <PageHeader
@@ -58,13 +79,17 @@ export default function AccountsPage() {
         description="Individual and joint savings accounts."
       />
 
-      <div className="actions" style={{ marginBottom: 16 }}>
-        <Link className="btn" href="/accounts/new">
-          Open savings account
-        </Link>
+      <div className="grid grid-3 account-summary-grid">
+        <div className="card metric-card"><span className="metric-label">TOTAL ACCOUNTS</span><div className="stat">{accounts.length}</div><span className="muted small">All accessible savings accounts</span></div>
+        <div className="card metric-card"><span className="metric-label">TOTAL BALANCE</span><div className="stat">{money(totalBalance)}</div><span className="muted small">Current combined account balance</span></div>
+        <div className="card metric-card"><span className="metric-label">JOINT ACCOUNTS</span><div className="stat">{accounts.filter(account => account.acc_type === "JOINT").length}</div><span className="muted small">Accounts with multiple holders</span></div>
       </div>
 
-      <div className="card">
+      <div className="card account-list-card">
+        <div className="list-toolbar">
+          <div><h2>Account register</h2><p className="muted">Review balances, holders, plans, and account status.</p></div>
+          <div className="toolbar-actions"><input aria-label="Search accounts" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search account or customer" />{role === "AGENT" && <Link className="btn" href="/accounts/new">Open savings account</Link>}</div>
+        </div>
         {loading && <p className="muted">Loading savings accounts...</p>}
 
         {error && <p className="error">{error}</p>}
@@ -84,7 +109,7 @@ export default function AccountsPage() {
               </thead>
 
               <tbody>
-                {accounts.map((account) => (
+                {visibleAccounts.map((account) => (
                   <tr key={account.account_id}>
                     <td>
                       <Link href={`/accounts/${account.account_id}`}>
@@ -114,7 +139,7 @@ export default function AccountsPage() {
                   </tr>
                 ))}
 
-                {accounts.length === 0 && (
+                {visibleAccounts.length === 0 && (
                   <tr>
                     <td colSpan={6} className="muted">
                       No savings accounts found.
