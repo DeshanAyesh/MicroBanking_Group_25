@@ -1,8 +1,20 @@
---
 -- Report 1: Agent-wise Transactions
--- Show total transaction count and total transaction value.
--- Tables likely involved: transactions, users/employees/agents.
---
+SELECT
+    a.agent_id,
+    a.agent_code,
+    CONCAT(a.first_name, ' ', a.last_name) AS agent_name,
+    b.branch_name,
+    COUNT(at.transaction_id) AS transaction_count,
+    COALESCE(SUM(at.amount), 0.00) AS total_transaction_value,
+    COALESCE(SUM(CASE WHEN at.transaction_type = 'DEPOSIT' THEN at.amount ELSE 0 END), 0.00) AS total_deposits,
+    COALESCE(SUM(CASE WHEN at.transaction_type = 'WITHDRAWAL' THEN at.amount ELSE 0 END), 0.00) AS total_withdrawals
+FROM agent a
+JOIN branch b ON b.branch_id = a.branch_id
+LEFT JOIN account_transaction at ON at.agent_id = a.agent_id
+WHERE a.status = 'ACTIVE'
+GROUP BY a.agent_id, a.agent_code, a.first_name, a.last_name, b.branch_name
+ORDER BY total_transaction_value DESC, agent_name;
+
 -- Report 2: Account-wise Summary
 -- Shows every account's transaction totals and reconciles calculated balance
 -- against the current balance stored in savings_account.
@@ -128,19 +140,53 @@ LEFT JOIN (
     ON holders.account_id = sa.account_id
 
 ORDER BY sa.account_id;
---
--- Report 3: Active FDs
--- Show FD, account, customer, principal, duration, rate, next payout.
--- Tables likely involved: fixed_deposits, savings_accounts, account_holders,
--- customers, fd_plans.
---
--- Report 4: Monthly Interest Distribution
--- Show month, account type, number of interest credits, total interest distributed.
--- Tables likely involved: interest_distribution, transactions, savings_accounts/plans.
---
+
+-- Report 3: Active Fixed Deposits
+SELECT
+    fd.fd_id,
+    fd.fd_number,
+    sa.account_number,
+    CONCAT(c.first_name, ' ', c.last_name) AS customer_name,
+    fd.deposit_amount AS principal,
+    p.plan_name,
+    p.term_months,
+    p.interest_rate,
+    fd.maturity_date,
+    fd.next_payout_date
+FROM fixed_deposit fd
+JOIN savings_account sa ON sa.account_id = fd.linked_account_id
+JOIN customer c ON c.customer_id = sa.primary_customer_id
+JOIN fixed_deposit_plan p ON p.fd_plan_id = fd.fd_plan_id
+WHERE fd.status = 'ACTIVE'
+ORDER BY fd.next_payout_date, fd.fd_id;
+
+-- Report 4: Monthly Interest Distribution by Savings Plan
+SELECT
+    DATE_FORMAT(idist.cycle_end_date, '%Y-%m') AS month,
+    sp.plan_name AS account_type,
+    COUNT(*) AS interest_credits,
+    SUM(idist.interest_amount) AS total_interest
+FROM interest_distribution idist
+JOIN fixed_deposit fd ON fd.fd_id = idist.fd_id
+JOIN savings_account sa ON sa.account_id = fd.linked_account_id
+JOIN savings_plan sp ON sp.plan_id = sa.plan_id
+GROUP BY DATE_FORMAT(idist.cycle_end_date, '%Y-%m'), sp.plan_id, sp.plan_name
+ORDER BY month, sp.plan_id;
+
 -- Report 5: Customer Activity
--- Show total deposits, total withdrawals, net activity.
--- Tables likely involved: customers, account_holders, savings_accounts, transactions.
---
--- For every report, document joins, grouping, filtering, ordering and expected columns
--- before writing the SQL.
+SELECT
+    c.customer_id,
+    CONCAT(c.first_name, ' ', c.last_name) AS customer_name,
+    COALESCE(SUM(CASE WHEN at.transaction_type = 'DEPOSIT' THEN at.amount ELSE 0 END), 0.00) AS total_deposits,
+    COALESCE(SUM(CASE WHEN at.transaction_type = 'WITHDRAWAL' THEN at.amount ELSE 0 END), 0.00) AS total_withdrawals,
+    COALESCE(SUM(CASE WHEN at.transaction_type = 'DEPOSIT' THEN at.amount ELSE 0 END), 0.00)
+      - COALESCE(SUM(CASE WHEN at.transaction_type = 'WITHDRAWAL' THEN at.amount ELSE 0 END), 0.00) AS net_activity
+FROM customer c
+LEFT JOIN (
+    SELECT primary_customer_id AS customer_id, account_id FROM savings_account
+    UNION
+    SELECT customer_id, account_id FROM joint_account_holders
+) customer_accounts ON customer_accounts.customer_id = c.customer_id
+LEFT JOIN account_transaction at ON at.account_id = customer_accounts.account_id
+GROUP BY c.customer_id, c.first_name, c.last_name
+ORDER BY c.customer_id;

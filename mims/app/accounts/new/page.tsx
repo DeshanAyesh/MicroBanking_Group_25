@@ -185,22 +185,16 @@ export default function NewAccountPage() {
 
         {!loading && (
           <>
+            <div className="form-section-title"><span>01</span><div><strong>Account setup</strong><p>Select the account ownership type and savings plan.</p></div></div>
             <div className="field">
               <label>Account type</label>
-
-              <select
-                value={accountType}
-                onChange={(event) =>
-                  changeAccountType(
-                    event.target.value as "INDIVIDUAL" | "JOINT"
-                  )
-                }
-              >
-                <option value="INDIVIDUAL">Individual</option>
-                <option value="JOINT">Joint</option>
-              </select>
+              <div className="account-type-toggle">
+                <button type="button" className={accountType === "INDIVIDUAL" ? "selected" : ""} onClick={() => changeAccountType("INDIVIDUAL")}><strong>Individual</strong><small>One account holder</small></button>
+                <button type="button" className={accountType === "JOINT" ? "selected" : ""} onClick={() => changeAccountType("JOINT")}><strong>Joint</strong><small>Two or more holders</small></button>
+              </div>
             </div>
 
+            <div className="form-section-title"><span>02</span><div><strong>Customer details</strong><p>Choose the primary customer and joint holders when needed.</p></div></div>
             <div className="field">
               <label>Savings plan</label>
 
@@ -233,6 +227,7 @@ export default function NewAccountPage() {
               )}
             </div>
 
+            <div className="form-section-title"><span>03</span><div><strong>Opening funds</strong><p>The opening deposit is recorded as the first account transaction.</p></div></div>
             <div className="field">
               <label>Primary customer</label>
 

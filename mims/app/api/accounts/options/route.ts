@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth/authorization";
 import { getDbPool } from "@/lib/db/mysql";
-/* when agent wants to crete a acoount for the customers we need to shpw the active users and available plans in ui this get request render those data */
 export async function GET(request: NextRequest) {
   const session = requireRole(request, ["AGENT"]);
 

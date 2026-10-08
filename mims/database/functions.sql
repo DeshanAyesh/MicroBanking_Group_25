@@ -1,13 +1,7 @@
--- MySQL FUNCTION TODOs — DO NOT WRITE IMPLEMENTATIONS.
+-- Monthly fixed-deposit interest function.
+
 DELIMITER $$
 
--- ---------------------------------------------------------------------------
--- CalculateFDInterest(fd_id)
--- Monthly (30-day cycle) interest for one fixed deposit, SRS 4.6.3 #1:
---   Interest = (Principal x Annual Rate) / 12, rounded to 2 decimals.
--- fixed_deposit_plan.interest_rate is stored as a percentage (e.g. 14.00).
--- Returns NULL if the FD does not exist.
--- ---------------------------------------------------------------------------
 DROP FUNCTION IF EXISTS CalculateFDInterest$$
 CREATE FUNCTION CalculateFDInterest(p_fd_id INT)
 RETURNS DECIMAL(15,2)
@@ -25,6 +19,3 @@ BEGIN
 END$$
 
 DELIMITER ;
-
--- TODO: Function for transaction reference generation if implemented as DB logic.
--- Must be unique and collision-safe.

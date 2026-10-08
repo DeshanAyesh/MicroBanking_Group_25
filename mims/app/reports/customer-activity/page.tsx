@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BlockedNotice } from "@/components/BlockedNotice";
 import { PageHeader } from "@/components/PageHeader";
 
 
@@ -66,7 +65,7 @@ export default function Report() {
 
 
       {error && (
-        <BlockedNotice operation={error}/>
+        <p className="error">{error}</p>
       )}
 
 
