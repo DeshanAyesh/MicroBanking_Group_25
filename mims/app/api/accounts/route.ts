@@ -255,7 +255,10 @@ const toCents = (amount: string): bigint => {
     BigInt(fraction.padEnd(2, "0"))
   );
 };
-if (!isWithinBusinessHours()) {
+if (
+  process.env.ENFORCE_BUSINESS_HOURS === "true" &&
+  !isWithinBusinessHours()
+) {
   return NextResponse.json(
     {
       message:

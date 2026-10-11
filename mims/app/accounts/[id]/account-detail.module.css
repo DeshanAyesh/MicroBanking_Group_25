@@ -1,0 +1,31 @@
+.page { max-width: 1080px; padding-bottom: 3rem; }
+.backLink { display: inline-block; margin-bottom: .8rem; color: #0876a8; font-weight: 850; text-decoration: none; }
+.hero { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; margin-bottom: 1.25rem; }
+.hero > div { flex: 1; }
+.eyebrow { color: #0780af; font-size: .73rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+.state { padding: 4rem 1rem; color: #687f91; text-align: center; }
+.balanceCard { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.25rem; padding: 1.7rem; border-radius: 22px; color: #e9f8fd; background: linear-gradient(135deg, #063f65, #067293); box-shadow: 0 18px 36px rgba(4, 51, 79, .2); }
+.balanceCard div { display: grid; gap: .35rem; }
+.balanceCard span { color: #a8d9e8; font-size: .8rem; font-weight: 850; letter-spacing: .05em; text-transform: uppercase; }
+.balanceCard strong { color: #fff; font-size: clamp(2rem, 4vw, 3rem); }
+.balanceCard small { color: #b8dce7; }
+.balanceCard .status { padding: .45rem .75rem; border-radius: 999px; color: #fff; font-size: .72rem; }
+.balanceCard .active { background: #159866; }
+.balanceCard .inactive { background: #8b6876; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.15rem; }
+.panel { padding: 1.35rem; border: 1px solid #d3e1eb; border-radius: 20px; background: #fff; box-shadow: 0 13px 30px rgba(15, 55, 86, .06); }
+.panelHeading { display: flex; gap: .75rem; align-items: flex-start; padding-bottom: 1rem; border-bottom: 1px solid #e4ecf2; }
+.panelHeading > span { display: grid; flex: 0 0 32px; height: 32px; place-items: center; border-radius: 9px; color: #fff; background: #087fac; font-size: .78rem; font-weight: 900; }
+.panelHeading h2 { margin: 0 0 .2rem; color: #083f64; font-size: 1.05rem; }
+.panelHeading p { margin: 0; color: #6a8192; font-size: .82rem; }
+.panel dl { margin: 0; }
+.panel dl div { display: flex; justify-content: space-between; gap: 1rem; padding: .85rem 0; border-bottom: 1px solid #edf2f5; }
+.panel dt { color: #667f91; }
+.panel dd { margin: 0; color: #173e5b; font-weight: 800; text-align: right; }
+.primaryHolder, .holders { display: grid; gap: .35rem; padding: 1rem 0; border-bottom: 1px solid #e7eef3; }
+.primaryHolder span, .holders span { color: #687f91; font-size: .78rem; font-weight: 850; text-transform: uppercase; }
+.primaryHolder strong, .holders strong { color: #153f5e; font-size: 1rem; line-height: 1.5; }
+.holders small { color: #6c8292; }
+.securityNote { margin-top: 1.15rem; padding: 1rem 1.2rem; border: 1px solid #cde5ef; border-radius: 14px; color: #245571; background: #f1fafc; }
+.securityNote p { margin: .3rem 0 0; color: #5e788a; }
+@media (max-width: 720px) { .hero { align-items: stretch; flex-direction: column; } .grid { grid-template-columns: 1fr; } .balanceCard { align-items: flex-start; flex-direction: column; } }
