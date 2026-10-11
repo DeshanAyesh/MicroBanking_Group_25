@@ -1,0 +1,25 @@
+.page { padding-bottom: 3rem; }
+.backLink { display: inline-block; margin-bottom: .8rem; color: #0876a8; font-weight: 850; text-decoration: none; }
+.metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: .9rem; margin-bottom: 1.2rem; }
+.metrics article { display: grid; gap: .4rem; padding: 1.15rem; border: 1px solid #d5e3ed; border-radius: 17px; background: linear-gradient(145deg, #fff, #f6fbfd); box-shadow: 0 11px 25px rgba(15,55,86,.05); }
+.metrics span { color: #647e91; font-size: .72rem; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
+.metrics strong { color: #073f65; font-size: 1.35rem; }
+.panel { overflow: hidden; border: 1px solid #d3e1eb; border-radius: 20px; background: #fff; box-shadow: 0 15px 34px rgba(15,55,86,.07); }
+.toolbar { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; padding: 1.25rem 1.4rem; background: #f7fbfd; border-bottom: 1px solid #e1eaf1; }
+.toolbar h2 { margin: 0 0 .25rem; color: #073e63; }
+.toolbar p { margin: 0; color: #687f91; }
+.filters { display: flex; gap: .65rem; }
+.filters input, .filters select { min-height: 43px; padding: .6rem .7rem; border: 1px solid #cbdde8; border-radius: 10px; background: #fff; color: #163f5c; }
+.table { min-width: 1000px; }
+.table th { color: #557187; font-size: .72rem; letter-spacing: .05em; text-transform: uppercase; }
+.table td { vertical-align: middle; }
+.table code { color: #25506b; font-size: .78rem; }
+.type { display: inline-block; padding: .3rem .55rem; border-radius: 999px; font-size: .68rem; font-weight: 900; }
+.deposit { color: #087049; background: #e6f7ee; }
+.withdrawal { color: #a25b03; background: #fff1db; }
+.interest_credit { color: #17649a; background: #e7f3fb; }
+.incoming { color: #087049; white-space: nowrap; }
+.outgoing { color: #a25b03; white-space: nowrap; }
+.state { padding: 3.5rem 1rem; color: #687f91; text-align: center; }
+@media (max-width: 950px) { .metrics { grid-template-columns: repeat(2, 1fr); } .toolbar { align-items: stretch; flex-direction: column; } }
+@media (max-width: 580px) { .metrics { grid-template-columns: 1fr; } .filters { flex-direction: column; } }
