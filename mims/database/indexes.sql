@@ -5,6 +5,9 @@ CREATE INDEX idx_customer_agent_status
 CREATE INDEX idx_savings_account_primary_customer
   ON savings_account (primary_customer_id);
 
+CREATE INDEX idx_joint_holder_customer_account
+  ON joint_account_holders (customer_id, account_id);
+
 CREATE INDEX idx_account_transaction_account_date
   ON account_transaction (account_id, transaction_date);
 
