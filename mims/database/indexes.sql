@@ -11,5 +11,8 @@ CREATE INDEX idx_account_transaction_account_date
 CREATE INDEX idx_account_transaction_agent_date
   ON account_transaction (agent_id, transaction_date);
 
+CREATE INDEX idx_account_transaction_date
+  ON account_transaction (transaction_date);
+
 CREATE INDEX idx_fixed_deposit_status_payout
   ON fixed_deposit (status, next_payout_date);
