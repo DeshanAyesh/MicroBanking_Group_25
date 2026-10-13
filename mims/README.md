@@ -77,7 +77,7 @@ The containers communicate internally using `database:3306`.
 
 | Role | Username | Password |
 |---|---|---|
-| Administrator | `admin1` | `BTrust@123` |
+| Administrator | `admin` | `BTrust@123` |
 | Agent | `agent1` | `BTrust@123` |
 | Customer | `cust1` | `BTrust@123` |
 
