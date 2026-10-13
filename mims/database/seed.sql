@@ -28,6 +28,9 @@ INSERT INTO branch (branch_id, bank_id, branch_code, branch_name, location, addr
 (2, 1, 'BR002', 'Kandy Branch', 'Kandy', '2 Kandy Rd', '0812222222', 'kandy@btrust.lk'),
 (3, 1, 'BR003', 'Galle Branch', 'Galle', '3 Galle Rd', '0913333333', 'galle@btrust.lk');
 
+INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES
+(21, 1, 'admin1', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
+
 INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (1, 2, 'agent1', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
 INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (2, 2, 'agent2', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
 INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (3, 2, 'agent3', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
