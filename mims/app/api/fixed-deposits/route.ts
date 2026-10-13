@@ -204,15 +204,12 @@ export async function POST(request: NextRequest) {
 
     // 8. Audit trail: every balance change logs a transaction (SRS 5.4).
     //    NOTE: logged as WITHDRAWAL with an FDP reference prefix - see PR notes.
-    const [txInsert] = await connection.execute<ResultSetHeader>(
+    await connection.execute<ResultSetHeader>(
       `INSERT INTO account_transaction
          (transaction_ref, account_id, agent_id, transaction_type, amount, balance_after)
-       VALUES (LEFT(REPLACE(UUID(), '-', ''), 20), ?, ?, 'WITHDRAWAL', ?, ?)`,
+       VALUES (CONCAT('FDP', LEFT(REPLACE(UUID(), '-', ''), 17)),
+               ?, ?, 'WITHDRAWAL', ?, ?)`,
       [accountId, agentId, principalText, balanceAfter]
-    );
-    await connection.execute(
-      "UPDATE account_transaction SET transaction_ref = CONCAT('FDP', LPAD(transaction_id, 6, '0')) WHERE transaction_id = ?",
-      [txInsert.insertId]
     );
 
     // 9. Read the new FD back for the response
