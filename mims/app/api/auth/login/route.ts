@@ -41,9 +41,13 @@ export async function POST(request: Request) {
     });
 
     const response = NextResponse.json({ message: "Login successful.", role: user.role_name });
+    const secureCookie = process.env.SESSION_COOKIE_SECURE
+      ? process.env.SESSION_COOKIE_SECURE === "true"
+      : process.env.NODE_ENV === "production";
+
     response.cookies.set("mims_session", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: secureCookie,
       sameSite: "lax",
       path: "/"
     });

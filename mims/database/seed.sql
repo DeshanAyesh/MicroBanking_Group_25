@@ -238,5 +238,5 @@ UPDATE savings_account SET current_balance = 54000.00 WHERE account_id = 13;
 UPDATE savings_account SET current_balance = 58000.00 WHERE account_id = 14;
 UPDATE savings_account SET current_balance = 28000.00 WHERE account_id = 15;
 
-INSERT INTO user_account (role_id, username, password_hash, status) 
+INSERT INTO user_account (role_id, username, password_hash, status)
 VALUES (1, 'admin', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.', 'ACTIVE');
