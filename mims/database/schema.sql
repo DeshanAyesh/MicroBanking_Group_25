@@ -186,6 +186,8 @@ CREATE TABLE interest_distribution (
     interest_amount DECIMAL(15,2) NOT NULL,
     distributed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
+    UNIQUE KEY uq_interest_distribution_fd_cycle (fd_id, cycle_number),
+
     FOREIGN KEY (fd_id)
         REFERENCES fixed_deposit(fd_id),
 

@@ -16,9 +16,3 @@ export function getDbPool() {
   }
   return pool;
 }
-
-/*
-  IMPORTANT:
-  Do not hide SQL in an ORM or application-memory workaround.
-  Database operations belong in explicit TODO sections in the API/service layer.
-*/

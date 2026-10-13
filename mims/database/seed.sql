@@ -1,4 +1,3 @@
--- Seed
 
 SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE interest_distribution;
@@ -16,9 +15,7 @@ TRUNCATE TABLE branch;
 TRUNCATE TABLE bank;
 SET FOREIGN_KEY_CHECKS = 1;
 
---------------------------------------------------------------------------------
-Seed branches, agents, and test users (Roles, Bank, Branch, User Account, Agent)
---------------------------------------------------------------------------------
+-- Seed branches, agents, and test users (Roles, Bank, Branch, User Account, Agent)
 
 INSERT INTO role (role_id, role_name) VALUES
 (1, 'ADMIN'), (2, 'AGENT'), (3, 'CUSTOMER');
@@ -31,11 +28,11 @@ INSERT INTO branch (branch_id, bank_id, branch_code, branch_name, location, addr
 (2, 1, 'BR002', 'Kandy Branch', 'Kandy', '2 Kandy Rd', '0812222222', 'kandy@btrust.lk'),
 (3, 1, 'BR003', 'Galle Branch', 'Galle', '3 Galle Rd', '0913333333', 'galle@btrust.lk');
 
-INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (1, 2, 'agent1', 'hash_pwd');
-INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (2, 2, 'agent2', 'hash_pwd');
-INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (3, 2, 'agent3', 'hash_pwd');
-INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (4, 2, 'agent4', 'hash_pwd');
-INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (5, 2, 'agent5', 'hash_pwd');
+INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (1, 2, 'agent1', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
+INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (2, 2, 'agent2', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
+INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (3, 2, 'agent3', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
+INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (4, 2, 'agent4', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
+INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (5, 2, 'agent5', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
 
 INSERT INTO agent (agent_id, user_id, branch_id, agent_code, first_name, last_name, nic, phone, email, joined_date) VALUES
 (1, 1, 1, 'AGT001', 'Kamal', 'Perera', '801234567V', '0711111111', 'kamal@btrust.lk', '2020-01-15'),
@@ -44,25 +41,22 @@ INSERT INTO agent (agent_id, user_id, branch_id, agent_code, first_name, last_na
 (4, 4, 2, 'AGT004', 'Saman', 'Kumara', '831234567V', '0714444444', 'saman@btrust.lk', '2020-04-15'),
 (5, 5, 3, 'AGT005', 'Ruwan', 'Rajapaksha', '841234567V', '0715555555', 'ruwan@btrust.lk', '2020-05-15');
 
---------------------------------------------------------------------------------
--- Task: Add customer validation seed data (Customer User Accounts and Customer Profiles)
---------------------------------------------------------------------------------
 
-INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (6, 3, 'cust1', 'hash_pwd');
-INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (7, 3, 'cust2', 'hash_pwd');
-INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (8, 3, 'cust3', 'hash_pwd');
-INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (9, 3, 'cust4', 'hash_pwd');
-INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (10, 3, 'cust5', 'hash_pwd');
-INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (11, 3, 'cust6', 'hash_pwd');
-INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (12, 3, 'cust7', 'hash_pwd');
-INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (13, 3, 'cust8', 'hash_pwd');
-INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (14, 3, 'cust9', 'hash_pwd');
-INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (15, 3, 'cust10', 'hash_pwd');
-INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (16, 3, 'cust11', 'hash_pwd');
-INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (17, 3, 'cust12', 'hash_pwd');
-INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (18, 3, 'cust13', 'hash_pwd');
-INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (19, 3, 'cust14', 'hash_pwd');
-INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (20, 3, 'cust15', 'hash_pwd');
+INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (6, 3, 'cust1', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
+INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (7, 3, 'cust2', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
+INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (8, 3, 'cust3', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
+INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (9, 3, 'cust4', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
+INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (10, 3, 'cust5', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
+INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (11, 3, 'cust6', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
+INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (12, 3, 'cust7', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
+INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (13, 3, 'cust8', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
+INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (14, 3, 'cust9', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
+INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (15, 3, 'cust10', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
+INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (16, 3, 'cust11', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
+INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (17, 3, 'cust12', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
+INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (18, 3, 'cust13', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
+INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (19, 3, 'cust14', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
+INSERT INTO user_account (user_id, role_id, username, password_hash) VALUES (20, 3, 'cust15', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.');
 
 INSERT INTO customer (customer_id, user_id, branch_id, agent_id, nic, first_name, last_name, date_of_birth, gender, phone, address) VALUES
 (1, 6, 3, 5, '19711234567V', 'CustFirst1', 'CustLast1', '1971-01-01', 'FEMALE', '0770000001', 'Address 1'),
@@ -81,9 +75,6 @@ INSERT INTO customer (customer_id, user_id, branch_id, agent_id, nic, first_name
 (14, 19, 2, 4, '19841234567V', 'CustFirst14', 'CustLast14', '1984-01-01', 'MALE', '0770000014', 'Address 14'),
 (15, 20, 1, 1, '19851234567V', 'CustFirst15', 'CustLast15', '1985-01-01', 'FEMALE', '0770000015', 'Address 15');
 
---------------------------------------------------------------------------------
--- Task: Seed account plans (Savings Plans, Savings Accounts, Joint Account Holders)
---------------------------------------------------------------------------------
 
 INSERT INTO savings_plan (plan_id, plan_name, interest_rate, minimum_balance, minimum_age, maximum_age) VALUES
 (1, 'Children', 12.00, 0.00, 0, 12),
@@ -112,9 +103,6 @@ INSERT INTO savings_account (account_id, account_number, primary_customer_id, pl
 INSERT INTO joint_account_holders (account_id, customer_id) VALUES
 (14, 14), (14, 1), (15, 15), (15, 2);
 
---------------------------------------------------------------------------------
--- Task: Seed fixed deposit plans (Fixed Deposit Plans, Fixed Deposits)
---------------------------------------------------------------------------------
 
 INSERT INTO fixed_deposit_plan (fd_plan_id, plan_name, term_months, interest_rate) VALUES
 (1, '6 Months', 6, 13.00),
@@ -133,9 +121,6 @@ INSERT INTO fixed_deposit (fd_id, fd_number, linked_account_id, fd_plan_id, depo
 (9, 'FD00009', 9, 2, 100000.00, '2023-10-12', '2024-10-11', '2023-11-11', 'ACTIVE'),
 (10, 'FD00010', 10, 2, 100000.00, '2023-06-23', '2024-06-22', '2023-07-23', 'ACTIVE');
 
---------------------------------------------------------------------------------
--- Task: Generate transaction seed data and final account balances
---------------------------------------------------------------------------------
 
 INSERT INTO account_transaction (transaction_id, transaction_ref, account_id, agent_id, transaction_type, amount, balance_after, transaction_date) VALUES
 (1, 'TXN000001', 1, 3, 'DEPOSIT', 18000.00, 18000.00, '2023-01-01 10:00:00'),
@@ -237,7 +222,6 @@ INSERT INTO account_transaction (transaction_id, transaction_ref, account_id, ag
 (97, 'TXN000097', 2, 2, 'DEPOSIT', 5000.00, 69000.00, '2023-06-01 12:00:00'),
 (98, 'TXN000098', 14, 2, 'DEPOSIT', 16000.00, 58000.00, '2023-06-01 12:00:00');
 
--- Sync final balances (Also part of Person 4's data validation)
 UPDATE savings_account SET current_balance = 99000.00 WHERE account_id = 1;
 UPDATE savings_account SET current_balance = 69000.00 WHERE account_id = 2;
 UPDATE savings_account SET current_balance = 44000.00 WHERE account_id = 3;
@@ -253,3 +237,6 @@ UPDATE savings_account SET current_balance = 44000.00 WHERE account_id = 12;
 UPDATE savings_account SET current_balance = 54000.00 WHERE account_id = 13;
 UPDATE savings_account SET current_balance = 58000.00 WHERE account_id = 14;
 UPDATE savings_account SET current_balance = 28000.00 WHERE account_id = 15;
+
+INSERT INTO user_account (role_id, username, password_hash, status)
+VALUES (1, 'admin', '$2b$12$f9XvuXjx.xe6b3wKfPPIA.fRuYX1HhdfUOtEQi9uPVrsXi3BRUIE.', 'ACTIVE');

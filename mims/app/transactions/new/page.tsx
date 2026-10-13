@@ -1,24 +1,137 @@
 "use client";
+
 import { FormEvent, useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
-import { BlockedNotice } from "@/components/BlockedNotice";
 
 export default function NewTransaction() {
-  const [type,setType]=useState("DEPOSIT");
-  const [msg,setMsg]=useState("");
-  function submit(e:FormEvent){e.preventDefault();setMsg(`${type.toLowerCase()} database transaction`);}
-  return <div className="container" style={{maxWidth:700}}>
-    <PageHeader title="Process Transaction" description="Deposit and withdrawal validation must eventually execute atomically in MySQL." />
-    <form className="card form" onSubmit={submit}>
-      <div className="field"><label>Transaction type</label><select value={type} onChange={e=>setType(e.target.value)}><option>DEPOSIT</option><option>WITHDRAWAL</option></select></div>
-      <div className="field"><label>Account</label><input placeholder="Account number / ID" required /></div>
-      <div className="field"><label>Amount (LKR)</label><input type="number" min="0.01" step="0.01" required /></div>
-      <div className="field"><label>Agent / user</label><input placeholder="Authenticated user should be used server-side" /></div>
-      <div className="notice">
-        Withdrawal requirements: verify account, eligibility, available balance and minimum balance; then update balance and record the transaction atomically.
-      </div>
-      <button className="btn">Continue</button>
-      {msg && <BlockedNotice operation={msg} />}
-    </form>
-  </div>;
+  const [type, setType] = useState("DEPOSIT");
+  const [accountIdentifier, setAccountIdentifier] = useState("");
+  const [amount, setAmount] = useState("");
+  const [msg, setMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function submit(e: FormEvent) {
+    e.preventDefault();
+
+    setMsg("");
+    setLoading(true);
+
+    try {
+      const endpoint =
+        type === "DEPOSIT"
+          ? "/api/transactions/deposit"
+          : "/api/transactions/withdraw";
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          accountIdentifier,
+          amount: Number(amount)
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Transaction failed.");
+      }
+
+      setMsg(
+        `${data.message} Transaction Ref: ${data.transactionRef}. ` +
+        `New Balance: LKR ${Number(data.balanceAfter).toFixed(2)}`
+      );
+
+      setAmount("");
+
+    } catch (error) {
+      setMsg(
+        error instanceof Error
+          ? error.message
+          : "Transaction failed."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="container" style={{ maxWidth: 700 }}>
+      <PageHeader
+        title="Process Transaction"
+        description="Process deposits and withdrawals atomically."
+      />
+
+      <form className="card form" onSubmit={submit}>
+
+        <div className="field">
+          <label>Transaction type</label>
+
+          <select
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+          >
+            <option value="DEPOSIT">DEPOSIT</option>
+            <option value="WITHDRAWAL">WITHDRAWAL</option>
+          </select>
+        </div>
+
+        <div className="field">
+          <label>Account Number / ID</label>
+
+          <input
+            value={accountIdentifier}
+            onChange={(e) =>
+              setAccountIdentifier(e.target.value)
+            }
+            placeholder="Example: ACC00001 or 1"
+            required
+          />
+        </div>
+
+        <div className="field">
+          <label>Amount (LKR)</label>
+
+          <input
+            type="number"
+            min="0.01"
+            step="0.01"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="Enter amount"
+            required
+          />
+        </div>
+
+        <div className="notice">
+          {type === "DEPOSIT"
+            ? "The deposit will update the account balance and create a DEPOSIT transaction atomically."
+            : "The withdrawal will check available balance and minimum balance before updating the account atomically."
+          }
+        </div>
+
+        <button
+          className="btn"
+          type="submit"
+          disabled={loading}
+        >
+          {loading
+            ? "Processing..."
+            : type === "DEPOSIT"
+              ? "Process Deposit"
+              : "Process Withdrawal"
+          }
+        </button>
+
+        {msg && (
+          <div className="notice" style={{ marginTop: 16 }}>
+            {msg}
+          </div>
+        )}
+
+      </form>
+    </div>
+  );
 }

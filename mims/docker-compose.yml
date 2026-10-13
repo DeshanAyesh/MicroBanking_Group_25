@@ -1,0 +1,55 @@
+services:
+  database:
+    image: mysql:8.4
+    container_name: btrust-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-local_root_password}
+      MYSQL_DATABASE: btrust_mims
+      MYSQL_USER: btrust_user
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-local_database_password}
+    ports:
+      - "3307:3306"
+    volumes:
+      - btrust_mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./database/functions.sql:/docker-entrypoint-initdb.d/02-functions.sql:ro
+      - ./database/procedures.sql:/docker-entrypoint-initdb.d/03-procedures.sql:ro
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/04-seed.sql:ro
+      - ./database/indexes.sql:/docker-entrypoint-initdb.d/05-indexes.sql:ro
+      - ./database/triggers.sql:/docker-entrypoint-initdb.d/06-triggers.sql:ro
+      - ./database/reports.sql:/docker-entrypoint-initdb.d/07-reports.sql:ro
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 30s
+
+  application:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: btrust-mims
+    restart: unless-stopped
+    environment:
+      DB_HOST: database
+      DB_PORT: 3306
+      DB_NAME: btrust_mims
+      DB_USER: btrust_user
+      DB_PASSWORD: ${MYSQL_PASSWORD:-local_database_password}
+      JWT_SECRET: ${JWT_SECRET:-replace_this_local_docker_secret}
+      JWT_EXPIRES_IN: 8h
+      SESSION_COOKIE_SECURE: "false"
+      NEXT_PUBLIC_APP_NAME: B-Trust MIMS
+      ENFORCE_BUSINESS_HOURS: "false"
+    ports:
+      - "3000:3000"
+    depends_on:
+      database:
+        condition: service_healthy
+
+volumes:
+  btrust_mysql_data:

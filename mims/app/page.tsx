@@ -2,38 +2,30 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="container">
-      <section className="hero">
-        <h1>B-Trust Microbanking & Interest Management System</h1>
-        <p>
-          A small, believable microfinance banking management system designed for a
-          Database Systems university project. The database remains the heart of the application.
+    <div style={{ display: "flex", flexDirection: "column", minHeight: "calc(100vh - 72px)" }}>
+      <div className="container" style={{ flex: 1 }}>
+        <section className="hero">
+          <div className="hero-eyebrow">SECURE BANKING OPERATIONS PLATFORM</div>
+          <h1>B-Trust Microbanking & Interest Management System</h1>
+        </section>
+
+        <div className="card access-card">
+          <div>
+            <h2>One secure sign-in, the right workspace.</h2>
+          </div>
+          <div className="access-actions flex justify-center w-full">
+            <Link className="btn" href="/login">
+              Continue to Log in
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <footer className="footer w-full py-6 text-center text-sm text-gray-300">
+        <p className="text-sm text-gray-300">
+          Group 25. Database Systems Module. University of Moratuwa.
         </p>
-      </section>
-
-      <div className="grid grid-3">
-        <div className="card">
-          <h3>Database-first</h3>
-          <p className="muted">MySQL integration points are ready while your team writes the SQL.</p>
-        </div>
-        <div className="card">
-          <h3>Role-based</h3>
-          <p className="muted">Admin, agent and customer areas are separated with authorization helpers.</p>
-        </div>
-        <div className="card">
-          <h3>Financial flows</h3>
-          <p className="muted">Deposit, withdrawal, fixed deposit and interest-processing flows are scaffolded.</p>
-        </div>
-      </div>
-
-      <div className="card" style={{marginTop:16}}>
-        <h2>Start here</h2>
-        <div className="actions">
-          <Link className="btn" href="/login">Login</Link>
-          <Link className="btn secondary" href="/admin">Admin dashboard</Link>
-          <Link className="btn secondary" href="/customers">Customer management</Link>
-        </div>
-      </div>
+      </footer>
     </div>
   );
 }
