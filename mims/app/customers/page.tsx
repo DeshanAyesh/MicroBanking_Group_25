@@ -8,7 +8,7 @@ export default function CustomersPage() {
   useEffect(() => { fetch("/api/customers").then(async r => { const d = await r.json(); if (!r.ok) throw new Error(d.message); setRows(d); }).catch(e => setError(e.message || "Unable to load customers.")); }, []);
   const visibleRows = useMemo(() => { const term = search.trim().toLowerCase(); return !term ? rows : rows.filter(row => `${row.first_name} ${row.last_name} ${row.nic} ${row.email ?? ""}`.toLowerCase().includes(term)); }, [rows, search]);
   return <div className="container">
-    <PageHeader title="Customer Management" description="Search, filter, register, edit and inspect customers." />
+    <PageHeader title="Customer Management"/>
     <div className="actions" style={{marginBottom:16}}>
       <Link className="btn" href="/customers/new">Register customer</Link>
     </div>
