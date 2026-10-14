@@ -12,7 +12,8 @@ export function getDbPool() {
       password: process.env.DB_PASSWORD,
       waitForConnections: true,
       connectionLimit: 10,
-      ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: true } : undefined
+      // Change rejectUnauthorized from true to false to bypass the Aiven SSL error
+      ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : undefined
     });
   }
   return pool;
